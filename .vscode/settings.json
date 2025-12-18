@@ -1,0 +1,14 @@
+{
+  	"editor.detectIndentation": false,
+	"editor.insertSpaces": false,
+	"editor.tabSize": 4,
+	"files.eol": "\n",
+	"phpcs.executablePath": "C:/Users/81905/Local Sites/hamburger/tools/vendor/bin/phpcs.bat",
+	"phpcbf.executablePath": "C:/Users/81905/Local Sites/hamburger/tools/vendor/bin/phpcbf.bat",
+	"phpcs.standard": "WordPress",
+	"phpcbf.standard": "WordPress",
+	"phpcbf.onsave": false,
+	"[php]": {
+  	"editor.defaultFormatter": "simone-baldini.vscode-phpcbf"
+	}
+}
