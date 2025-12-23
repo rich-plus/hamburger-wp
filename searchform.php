@@ -11,7 +11,6 @@
 	サイト内検索
 	</label>
 	<input type="search" id="s" name="s"
-	class="p-search__input c-font--bold c-color--text-secondary c-border--primary" placeholder="チーズバーガー"
-	aria-label="検索キーワードを入力">
+	class="p-search__input c-font--bold c-color--text-secondary c-border--primary" placeholder="チーズバーガー">
 	<button type="submit" class="c-button--grad c-color--text-secondary">検索</button>
 </form>

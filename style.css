@@ -623,7 +623,7 @@ a {
 	min-height: 150px;
 	padding-top: clamp(16px, calc(0.1629464286rem + 3.5714285714vw), 30px);
 	padding-bottom: clamp(16px, calc(0.5216836735rem + 2.0408163265vw), 24px);
-	background-image: url("../../../images/footer/footer.png");
+	background-image: url("images/footer/footer.png");
 	background-size: cover;
 	background-position: center;
 	background-repeat: no-repeat;
@@ -726,35 +726,35 @@ a {
 	}
 }
 .p-menu-card--takeout {
-	background-image: url("../../../images/top/takeout--sp.jpg");
+	background-image: url("images/top/takeout--sp.jpg");
 	background-size: cover;
 	background-position: center;
 	background-repeat: no-repeat;
 }
 @media screen and ( min-width: 768px ) {
 	.p-menu-card--takeout {
-	background-image: url("../../../images/top/takeout--tb.jpg");
+	background-image: url("images/top/takeout--tb.jpg");
 	}
 }
 @media screen and ( min-width: 1024px ) {
 	.p-menu-card--takeout {
-	background-image: url("../../../images/top/takeout--pc.jpg");
+	background-image: url("images/top/takeout--pc.jpg");
 	}
 }
 .p-menu-card--eatin {
-	background-image: url("../../../images/top/eatin--sp.jpg");
+	background-image: url("images/top/eatin--sp.jpg");
 	background-size: cover;
 	background-position: center;
 	background-repeat: no-repeat;
 }
 @media screen and ( min-width: 768px ) {
 	.p-menu-card--eatin {
-	background-image: url("../../../images/top/eatin--tb.jpg");
+	background-image: url("images/top/eatin--tb.jpg");
 	}
 }
 @media screen and ( min-width: 1024px ) {
 	.p-menu-card--eatin {
-	background-image: url("../../../images/top/eatin--pc.jpg");
+	background-image: url("images/top/eatin--pc.jpg");
 	}
 }
 
@@ -997,7 +997,7 @@ body.is-open {
 	padding-bottom: clamp(6px, calc(0.9864477041rem + -1.2755102041vw), 11px);
 	padding-left: clamp(49px, calc(2.3450255102rem + 3.0612244898vw), 61px);
 	background-color: #FFFFFF;
-	background-image: url("../../../images/search/search.png");
+	background-image: url("images/search/search.png");
 	background-repeat: no-repeat;
 	background-position-x: clamp(5px, calc(-0.1060267857rem + 1.7857142857vw), 12px);
 	background-position-y: center;

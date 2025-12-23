@@ -35,6 +35,11 @@ function hamburger_theme_support() {
 	// Post thumbnails support.
 	add_theme_support( 'post-thumbnails' );
 
+	// Register custom image sizes for archive cards.
+	add_image_size( 'archive-card-pc', 677, 471, true );
+	add_image_size( 'archive-card-tb', 379, 355, true );
+	add_image_size( 'archive-card-sp', 337, 231, true );
+
 	// Register navigation menus.
 	register_nav_menus(
 		array(
@@ -109,78 +114,126 @@ function hamburger_script() {
 }
 add_action( 'wp_enqueue_scripts', 'hamburger_script' );
 
+
+// init フックで、"メニュー"カスタム投稿を登録.
+add_action( 'init', 'hamburger_menu_init' );
+
 /**
- * Custom walker for category navigation menu.
- * Outputs menu items with hamburger theme's specific HTML structure.
- *
- * @package hamburger
+ * Register the ‘Menu’ custom post type.
  */
-class Hamburger_Walker_Nav_Menu extends Walker_Nav_Menu {
+function hamburger_menu_init() {
+	// ラベル（管理画面に表示される名前）.
+	$labels = array(
+		// _x()は、同じ文字列でも文脈によって意味が変わる場合に、翻訳者に文脈を伝えるための関数
+		'name'               => _x( 'Menus', 'post type general name', 'hamburger' ),
+		'singular_name'      => _x( 'Menu', 'post type singular name', 'hamburger' ),
+		'menu_name'          => _x( 'Menus', 'admin menu', 'hamburger' ),
+		'name_admin_bar'     => _x( 'Menu', 'add new on admin bar', 'hamburger' ),
+		'add_new'            => _x( '新規追加', 'menu', 'hamburger' ),
+		'add_new_item'       => __( '新しいMenu', 'hamburger' ),
+		'new_item'           => __( '新しいMenu', 'hamburger' ),
+		'edit_item'          => __( 'Menuを編集', 'hamburger' ),
+		'view_item'          => __( 'Menuを表示', 'hamburger' ),
+		'all_items'          => __( 'すべてのMenu', 'hamburger' ),
+		'search_items'       => __( 'Menuを検索', 'hamburger' ),
+		'parent_item_colon'  => __( '親Menu', 'hamburger' ),
+		'not_found'          => __( 'Menuが見つかりませんでした。', 'hamburger' ),
+		'not_found_in_trash' => __( 'ゴミ箱にMenuはありません。', 'hamburger' ),
+	);
 
-	/**
-	 * Start the element output.
-	 *
-	 * @param string $output Used to append additional content (passed by reference).
-	 * @param object $item   Menu item data object.
-	 * @param int    $depth  Depth of menu item. Used for padding.
-	 * @param array  $args   An array of arguments. @see wp_nav_menu().
-	 * @param int    $id     Current item ID.
-	 */
-	public function start_el( &$output, $item, $depth = 0, $args = null, $id = 0 ) {
-		$indent = ( $depth ) ? str_repeat( "\t", $depth ) : '';
+	// カスタム投稿タイプの設定.
+	$args = array(
+		'labels'             => $labels, // 先ほど定義した$labels配列.
+		'public'             => true, // 公開する：site.com/menu/投稿名でアクセス可能.
+		'publicly_queryable' => true, // クエリ可能：アーカイブページや検索結果に表示される.
+		'show_ui'            => true, // 管理画面にUI表示：管理画面にMenuが表示される.
+		'show_in_menu'       => true, // 管理画面の左サイドバーに表示.
+		'query_var'          => true, // URLクエリパラメータでこの投稿タイプを指定：site.com/?menu=投稿名でアクセス可能.
+		'rewrite'            => array( 'slug' => 'menu' ), // フロントエンドのURL構造を設定：'slug' => 'menu': yoursite.com/menu/投稿名.
+		'capability_type'    => 'post', // この投稿タイプの権限をどの投稿タイプと同じにするか：'post': 通常の投稿と同じ権限, 'page': 固定ページと同じ権限, 配列：カスタム権限.
+		'has_archive'        => true, // アーカイブページの有効化：site.com/menu/ で一覧ページが表示される.
+		'hierarchical'       => false, // 親子関係（階層構造）の有効化：編集画面に「親Menu」選択欄が表示される（false:非表示）.
+		'menu_position'      => null, // 管理画面の左サイドバーでの表示位置：null:デフォルト位置（自動的に下に追加）, 数値：位置を指定（目安 5:投稿の下,20:固定ページの下,60:外観の下）.
+		'show_in_rest'       => true, // REST APIに公開。ブロックエディタ（Gutenberg）対応のためtrue推奨.
+		'menu_icon'          => 'dashicons-food', // 管理画面の左サイドバーに表示されるアイコン.
+		'supports'           => array( 'title', 'editor', 'thumbnail', 'excerpt' ), // 機能リスト(タイトル、説明文、アイキャッチ画像、抜粋).
+	);
 
-		$classes   = empty( $item->classes ) ? array() : (array) $item->classes;
-		$classes[] = 'menu-item-' . $item->ID;
+	register_post_type( 'menu', $args );
+}
+// init フックで、"Menu"カスタム投稿用のカスタム分類を登録.
+add_action( 'init', 'hamburger_menu_taxonomies' );
 
-		$class_names = join( ' ', apply_filters( 'nav_menu_css_class', array_filter( $classes ), $item, $args ) );
+/**
+ * Register custom taxonomy for hamburger menu.
+ */
+function hamburger_menu_taxonomies() {
+	// "Menuカテゴリー"というカスタム分類を追加（階層型：カテゴリーのように親子関係がある）.
+	$category_labels = array(
+		'name'              => _x( 'Menuカテゴリー', 'taxonomy general name', 'hamburger' ),
+		'singular_name'     => _x( 'Menuカテゴリー', 'taxonomy singular name', 'hamburger' ),
+		'search_items'      => __( 'Menuカテゴリーを検索', 'hamburger' ),
+		'all_items'         => __( 'すべてのMenuカテゴリー', 'hamburger' ),
+		'parent_item'       => __( '親カテゴリー', 'hamburger' ),
+		'parent_item_colon' => __( '親カテゴリー:', 'hamburger' ),
+		'edit_item'         => __( 'Menuカテゴリーを編集', 'hamburger' ),
+		'update_item'       => __( 'Menuカテゴリーを更新', 'hamburger' ),
+		'add_new_item'      => __( '新しいMenuカテゴリーを追加', 'hamburger' ),
+		'new_item_name'     => __( '新しいMenuカテゴリー名', 'hamburger' ),
+		'menu_name'         => __( 'Menuカテゴリー', 'hamburger' ),
+	);
 
-		if ( 0 === $depth ) {
-			$class_names = 'p-sidemenu__category';
-		} else {
-			$class_names = 'p-sidemenu__subitem';
-		}
+	$category_args = array(
+		'hierarchical'      => true,
+		'labels'            => $category_labels,
+		'show_ui'           => true,
+		'show_admin_column' => true, // 管理画面の投稿一覧に、このタクソノミーのカラムを表示する.
+		'query_var'         => true,
+		'rewrite'           => array( 'slug' => 'menu-category' ),
+		'show_in_rest'      => true,
+	);
 
-		$output .= $indent . '<li class="' . esc_attr( $class_names ) . '">';
+	register_taxonomy( 'menu_category', array( 'menu' ), $category_args );
 
-		$attributes  = ! empty( $item->attr_title ) ? ' title="' . esc_attr( $item->attr_title ) . '"' : '';
-		$attributes .= ! empty( $item->target ) ? ' target="' . esc_attr( $item->target ) . '"' : '';
-		$attributes .= ! empty( $item->xfn ) ? ' rel="' . esc_attr( $item->xfn ) . '"' : '';
-		$attributes .= ! empty( $item->url ) ? ' href="' . esc_attr( $item->url ) . '"' : '';
+	// "Menuタグ"を追加（非階層型：タグのように親子関係がない）.
+	$tag_labels = array(
+		'name'                       => _x( 'Menuタグ', 'taxonomy general name', 'hamburger' ),
+		'singular_name'              => _x( 'Menuタグ', 'taxonomy singular name', 'hamburger' ),
+		'search_items'               => __( 'Menuタグを検索', 'hamburger' ),
+		'popular_items'              => __( '人気のMenuタグ', 'hamburger' ),
+		'all_items'                  => __( 'すべてのMenuタグ', 'hamburger' ),
+		'parent_item'                => null,
+		'parent_item_colon'          => null,
+		'edit_item'                  => __( 'Menuタグを編集', 'hamburger' ),
+		'update_item'                => __( 'Menuタグを更新', 'hamburger' ),
+		'add_new_item'               => __( '新しいMenuタグを追加', 'hamburger' ),
+		'new_item_name'              => __( '新しいMenuタグ名', 'hamburger' ),
+		'separate_items_with_commas' => __( 'Menuタグをカンマで区切る', 'hamburger' ),
+		'add_or_remove_items'        => __( 'Menuタグを追加または削除', 'hamburger' ),
+		'choose_from_most_used'      => __( 'よく使われているMenuタグから選択', 'hamburger' ),
+		'not_found'                  => __( 'Menuタグが見つかりませんでした。.', 'hamburger' ),
+		'menu_name'                  => __( 'Menuタグ', 'hamburger' ),
+	);
 
-		$item_output = isset( $args->before ) ? $args->before : '';
-		if ( 0 === $depth ) {
-			$item_output .= '<a class="p-sidemenu__item js-fade-link"' . $attributes . '>';
-		} else {
-			$item_output .= '<a class="p-sidemenu__link"' . $attributes . '>';
-		}
-		$item_output .= ( isset( $args->link_before ) ? $args->link_before : '' ) . apply_filters( 'the_title', $item->title, $item->ID ) . ( isset( $args->link_after ) ? $args->link_after : '' );
-		$item_output .= '</a>';
-		$item_output .= isset( $args->after ) ? $args->after : '';
+	$tag_args = array(
+		'hierarchical'          => false,
+		'labels'                => $tag_labels,
+		'show_ui'               => true,
+		'show_admin_column'     => true,
+		'update_count_callback' => '_update_post_term_count', // 各タグに紐づいている投稿数を自動更新する関数(WordPressの標準関数)を指定.
+		'query_var'             => true,
+		'rewrite'               => array( 'slug' => 'menu-tag' ),
+		'show_in_rest'          => true,
+	);
 
-		$output .= apply_filters( 'walker_nav_menu_start_el', $item_output, $item, $depth, $args );
-	}
+	register_taxonomy( 'menu_tag', array( 'menu' ), $tag_args );
+}
 
-	/**
-	 * Start the list before the elements are added.
-	 *
-	 * @param string $output Used to append additional content (passed by reference).
-	 * @param int    $depth  Depth of menu item. Used for padding.
-	 * @param array  $args   An array of arguments. @see wp_nav_menu().
-	 */
-	public function start_lvl( &$output, $depth = 0, $args = null ) {
-		$indent = str_repeat( "\t", $depth );
-		$output .= "\n" . $indent . '<ul class="p-sidemenu__sub-list">' . "\n";
-	}
-
-	/**
-	 * End the list after the elements are added.
-	 *
-	 * @param string $output Used to append additional content (passed by reference).
-	 * @param int    $depth  Depth of menu item. Used for padding.
-	 * @param array  $args   An array of arguments. @see wp_nav_menu().
-	 */
-	public function end_lvl( &$output, $depth = 0, $args = null ) {
-		$indent = str_repeat( "\t", $depth );
-		$output .= $indent . '</ul>' . "\n";
-	}
+/**
+ * Footer copyright name.
+ *
+ * @return string
+ */
+function hamburger_get_copyright() {
+	return 'RaiseTech';
 }

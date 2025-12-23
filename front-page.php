@@ -1,6 +1,6 @@
 <?php
 /**
- * Index template file.
+ * Front page template file.
  *
  * @package hamburger
  */
