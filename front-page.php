@@ -73,5 +73,7 @@ get_header(); ?>
 	</div>
 	</section>
 </main>
-<?php get_sidebar(); ?>
-<?php get_footer(); ?>
+
+<?php
+get_sidebar();
+get_footer();

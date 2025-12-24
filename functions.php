@@ -55,22 +55,6 @@ function hamburger_theme_support() {
 add_action( 'after_setup_theme', 'hamburger_theme_support' );
 
 /**
- * Outputs the page title.
- *
- * @param string $title The page title.
- * @return string
- */
-function hamburger_title( $title ) {
-	if ( is_front_page() && is_home() ) {
-		$title = get_bloginfo( 'name', 'display' );
-	} elseif ( is_singular() ) {
-		$title = single_post_title( '', false );
-	}
-	return $title;
-}
-add_filter( 'pre_get_document_title', 'hamburger_title' );
-
-/**
  * Enqueues theme scripts and styles.
  *
  * @return void
@@ -114,6 +98,30 @@ function hamburger_script() {
 }
 add_action( 'wp_enqueue_scripts', 'hamburger_script' );
 
+/**
+ * Outputs the page title.
+ *
+ * @param string $title The page title.
+ * @return string
+ */
+function hamburger_title( $title ) {
+	if ( is_front_page() && is_home() ) {
+		$title = get_bloginfo( 'name', 'display' );
+	} elseif ( is_singular() ) {
+		$title = single_post_title( '', false );
+	}
+	return $title;
+}
+add_filter( 'pre_get_document_title', 'hamburger_title' );
+
+/**
+ * Footer copyright name.
+ *
+ * @return string The copyright name to display in the footer.
+ */
+function hamburger_get_copyright() {
+	return 'RaiseTech';
+}
 
 // init フックで、"メニュー"カスタム投稿を登録.
 add_action( 'init', 'hamburger_menu_init' );
@@ -124,7 +132,7 @@ add_action( 'init', 'hamburger_menu_init' );
 function hamburger_menu_init() {
 	// ラベル（管理画面に表示される名前）.
 	$labels = array(
-		// _x()は、同じ文字列でも文脈によって意味が変わる場合に、翻訳者に文脈を伝えるための関数
+		// _x()は、同じ文字列でも文脈によって意味が変わる場合に、翻訳者に文脈を伝えるための関数です.
 		'name'               => _x( 'Menus', 'post type general name', 'hamburger' ),
 		'singular_name'      => _x( 'Menu', 'post type singular name', 'hamburger' ),
 		'menu_name'          => _x( 'Menus', 'admin menu', 'hamburger' ),
@@ -165,7 +173,13 @@ function hamburger_menu_init() {
 add_action( 'init', 'hamburger_menu_taxonomies' );
 
 /**
- * Register custom taxonomy for hamburger menu.
+ * Registers custom taxonomies for the hamburger menu custom post type.
+ *
+ * Registers two taxonomies:
+ * - menu_category: Hierarchical taxonomy (like categories)
+ * - menu_tag: Non-hierarchical taxonomy (like tags)
+ *
+ * @return void
  */
 function hamburger_menu_taxonomies() {
 	// "Menuカテゴリー"というカスタム分類を追加（階層型：カテゴリーのように親子関係がある）.
@@ -211,7 +225,7 @@ function hamburger_menu_taxonomies() {
 		'separate_items_with_commas' => __( 'Menuタグをカンマで区切る', 'hamburger' ),
 		'add_or_remove_items'        => __( 'Menuタグを追加または削除', 'hamburger' ),
 		'choose_from_most_used'      => __( 'よく使われているMenuタグから選択', 'hamburger' ),
-		'not_found'                  => __( 'Menuタグが見つかりませんでした。.', 'hamburger' ),
+		'not_found'                  => __( 'Menuタグが見つかりませんでした。', 'hamburger' ),
 		'menu_name'                  => __( 'Menuタグ', 'hamburger' ),
 	);
 
@@ -230,10 +244,105 @@ function hamburger_menu_taxonomies() {
 }
 
 /**
- * Footer copyright name.
+ * Customizes navigation menu <li> CSS classes for sidebar and footer menus.
  *
- * @return string
+ * Adds custom CSS classes to menu items based on their location and hierarchy:
+ * - Sidebar menu parent items: 'p-sidemenu__category'
+ * - Sidebar menu child items: 'p-sidemenu__subitem'
+ * - Footer menu items: 'p-footer__item'
+ *
+ * @param array    $classes Array of CSS classes applied to the menu item's <li> element.
+ * @param WP_Post  $item    The current menu item object.
+ * @param stdClass $args    An object of wp_nav_menu() arguments.
+ * @return array Modified array of CSS classes.
  */
-function hamburger_get_copyright() {
-	return 'RaiseTech';
+function hamburger_nav_menu_css_classes( $classes, $item, $args ) {
+	// サイドメニューの場合.
+	if ( isset( $args->theme_location ) && 'category_nav' === $args->theme_location ) {
+
+		// メニュー項目（li）が親メニューかどうかを判定する.
+		// menu_item_parent が '0' の場合、その項目は階層の最上位にある.
+		$is_parent = isset( $item->menu_item_parent ) && '0' === $item->menu_item_parent;
+
+		// 親（階層の最上位）メニューの場合.
+		if ( $is_parent ) {
+			// 親メニュー用のクラスを付与.
+			$classes[] = 'p-sidemenu__category';
+		} else {
+			// 子メニュー用のクラスを付与.
+			$classes[] = 'p-sidemenu__subitem';
+		}
+	}
+
+	// フッターメニューの場合.
+	if ( isset( $args->theme_location ) && 'footer_nav' === $args->theme_location ) {
+		$classes[] = 'p-footer__item';
+	}
+	return $classes;
 }
+// メニュー項目（li）のCSSクラスをカスタマイズするフィルターを追加.
+add_filter( 'nav_menu_css_class', 'hamburger_nav_menu_css_classes', 10, 3 );
+
+/**
+ * Customizes navigation menu <a> element attributes for sidebar and footer menus.
+ *
+ * Adds custom CSS classes to menu links based on their location and hierarchy:
+ * - Sidebar menu parent items: 'p-sidemenu__item js-fade-link'
+ * - Sidebar menu child items: 'p-sidemenu__link'
+ * - Footer menu items: 'p-footer__link js-fade-link'
+ *
+ * Preserves existing classes if they exist.
+ *
+ * @param array    $atts   HTML attributes applied to the menu item's <a> element.
+ * @param WP_Post  $item   The current menu item object.
+ * @param stdClass $args   An object of wp_nav_menu() arguments.
+ * @return array Modified array of HTML attributes.
+ */
+function hamburger_nav_menu_link_attributes( $atts, $item, $args ) {
+	// すでにclass属性が設定されている場合は、上書きではなく、文字列連結して、後続にクラスを追加できるようにする.
+	$existing_class = isset( $atts['class'] ) ? $atts['class'] . ' ' : '';
+
+	// サイドメニューの場合.
+	if ( isset( $args->theme_location ) && 'category_nav' === $args->theme_location ) {
+
+		// このリンクが属するメニュー項目（li）が親メニューかどうかを判定する.
+		// menu_item_parent が '0' の場合、その項目は階層の最上位にある.
+		$is_parent = isset( $item->menu_item_parent ) && '0' === $item->menu_item_parent;
+
+		// 親（階層の最上位）メニューの場合.
+		if ( $is_parent ) {
+			// 親メニュー用のクラスを付与（既存クラスがあれば保持）.
+			$atts['class'] = $existing_class . 'p-sidemenu__item js-fade-link';
+		} else {
+			// 子メニュー用のクラスを付与.
+			$atts['class'] = $existing_class . 'p-sidemenu__link';
+		}
+	}
+	// フッターメニューの場合.
+	if ( isset( $args->theme_location ) && 'footer_nav' === $args->theme_location ) {
+		$atts['class'] = $existing_class . 'p-footer__link js-fade-link';
+	}
+	return $atts;
+}
+// メニューのリンク（<a>タグ属性）をカスタマイズするフィルターを追加.
+add_filter( 'nav_menu_link_attributes', 'hamburger_nav_menu_link_attributes', 10, 3 );
+
+/**
+ * Customizes navigation submenu <ul> CSS classes for sidebar menu.
+ *
+ * Adds custom CSS classes to submenu containers based on their location:
+ * - Sidebar menu submenus: 'p-sidemenu__sub-list'
+ *
+ * @param array    $classes Array of CSS classes applied to the submenu <ul> element.
+ * @param stdClass $args    An object of wp_nav_menu() arguments.
+ * @return array Modified array of CSS classes.
+ */
+function hamburger_sidebar_nav_menu_submenu_css_classes( $classes, $args ) {
+	// サイドメニューの場合.
+	if ( isset( $args->theme_location ) && 'category_nav' === $args->theme_location ) {
+		$classes[] = 'p-sidemenu__sub-list';
+	}
+	return $classes;
+}
+// メニュー項目（ul）のCSSクラスをカスタマイズするフィルターを追加.
+add_filter( 'nav_menu_submenu_css_class', 'hamburger_sidebar_nav_menu_submenu_css_classes', 10, 2 );

@@ -127,35 +127,24 @@ get_header(); ?>
 			</div>
 		</section>
 
-		<nav class="p-pagination c-color--text-secondary">
-			<!-- PC/Tablet : 数字ページネーション -->
-			<div class="p-pagination__numbers">
-			<span class="p-pagination__info">page 1 / 10</span>
-			<a href="" class="p-pagination__prev"><img src="
-			<?php
-			echo esc_url( get_theme_file_uri( '/images/archive/laquo.svg" alt="前のページへ"></a>
-            <ul class="p-pagination__list">
-              <li><a href="" class="p-pagination__item c-color--text-inverse c-color--bg-accent c-border--primary" aria-current="page" aria-label="現在のページ、1ページ目">1</a></li>
-              <li><a href="" class="p-pagination__item c-border--primary" aria-label="2ページ目へ">2</a></li>
-              <li><a href="" class="p-pagination__item c-border--primary" aria-label="3ページ目へ">3</a></li>
-              <li><a href="" class="p-pagination__item c-border--primary" aria-label="4ページ目へ">4</a></li>
-              <li><a href="" class="p-pagination__item c-border--primary" aria-label="5ページ目へ">5</a></li>
-              <li><a href="" class="p-pagination__item c-border--primary" aria-label="6ページ目へ">6</a></li>
-              <li><a href="" class="p-pagination__item c-border--primary" aria-label="7ページ目へ">7</a></li>
-              <li><a href="" class="p-pagination__item c-border--primary" aria-label="8ページ目へ">8</a></li>
-              <li><a href="" class="p-pagination__item c-border--primary" aria-label="9ページ目へ">9</a></li>
-            </ul>
-            <a href="" class="p-pagination__next"><img src="<?php echo esc_url( get_theme_file_uri( ' / images / archive / raquo . svg' alt='前のページへ'></a>
-          </div>
-          <!-- Mobile : 前へ / 次へ -->
-          <div class='p - pagination__arrows'>
-            <a href="" class='p - pagination__prev' aria-label='前のページへ'><img class='p - pagination__prev - laquo'
-                src=' < ? php echo esc_url( get_theme_file_uri( '/images/archive/laquo.svg" alt="前のページへ">前へ</a>
-            <a href="" class="p-pagination__next" aria-label="次のページへ">次へ<img class="p-pagination__next-raquo"
-                src="<?php echo esc_url( get_theme_file_uri( ' / images / archive / raquo . svg' alt='前のページへ"></a>
-			</div>
-			</nav>
+		<?php
+		// ページネーション（プラグイン対応）
+		if ( function_exists( 'wp_pagenavi' ) ) {
+			// WP-PageNaviプラグインが有効な場合
+			wp_pagenavi();
+		} elseif ( function_exists( 'the_posts_pagination' ) ) {
+			// WordPress標準のページネーション
+			the_posts_pagination(
+				array(
+					'mid_size'  => 2,
+					'prev_text' => '前へ',
+					'next_text' => '次へ',
+				)
+			);
+		}
+		?>
 			</main>
 
-			<?php get_sidebar(); ?>
-			<?php get_footer(); ?>
+<?php
+get_sidebar();
+get_footer();
