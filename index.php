@@ -5,6 +5,12 @@
  * @package hamburger
  */
 
-get_header();
+get_header(); ?>
 
+<main class="l-main">
+	<!-- 空のメインコンテンツエリア -->
+</main>
+</div>
+
+<?php
 get_footer();
