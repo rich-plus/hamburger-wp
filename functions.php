@@ -346,3 +346,16 @@ function hamburger_sidebar_nav_menu_submenu_css_classes( $classes, $args ) {
 }
 // メニュー項目（ul）のCSSクラスをカスタマイズするフィルターを追加.
 add_filter( 'nav_menu_submenu_css_class', 'hamburger_sidebar_nav_menu_submenu_css_classes', 10, 2 );
+
+/**
+ * Limit search results to the custom post type "menu".
+ *
+ * @param WP_Query $query The WordPress query object.
+ * @return void
+ */
+function hamburger_search_filter( $query ) {
+	if ( ! is_admin() && $query->is_main_query() && $query->is_search() ) {
+		$query->set( 'post_type', 'menu' );
+	}
+}
+add_action( 'pre_get_posts', 'hamburger_search_filter' );

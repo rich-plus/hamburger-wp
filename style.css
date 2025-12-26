@@ -1003,6 +1003,9 @@ body.is-open {
 	background-position-y: center;
 	background-size: 24px 24px;
 }
+.p-search__input:-webkit-autofill {
+	-webkit-text-fill-color: #3C2A10;
+}
 .p-search .c-button--grad {
 	border-radius: 10px;
 	width: clamp(90px, calc(2.8746811224rem + 11.7346938776vw), 136px);

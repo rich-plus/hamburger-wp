@@ -18,7 +18,7 @@ get_header(); ?>
 	</section>
 
 	<div class="c-layout__container">
-	<a href="<?php echo esc_url( get_post_type_archive_link( 'menu' ) ); ?>" class="p-menu-card p-menu-card--takeout js-fade-link">
+	<a href="<?php echo esc_url( get_term_link( 'take-out', 'menu_category' ) ); ?>" class="p-menu-card p-menu-card--takeout js-fade-link">
 		<h2 class="p-menu-card__title c-font--accent c-color--text-tertiary c-underline">Take Out</h2>
 		<div class="p-menu-card__content">
 		<div class="p-menu-card__item c-color--bg-overlay-white-80">
@@ -36,7 +36,7 @@ get_header(); ?>
 		</div>
 	</a>
 
-	<a href="<?php echo esc_url( get_post_type_archive_link( 'menu' ) ); ?>" class="p-menu-card p-menu-card--eatin js-fade-link">
+	<a href="<?php echo esc_url( get_term_link( 'eat-in', 'menu_category' ) ); ?>" class="p-menu-card p-menu-card--eatin js-fade-link">
 		<h2 class="p-menu-card__title c-font--accent c-color--text-inverse c-underline">Eat In</h2>
 		<div class="p-menu-card__content">
 		<div class="p-menu-card__item c-color--bg-overlay-white-80">
