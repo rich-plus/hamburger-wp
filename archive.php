@@ -191,7 +191,7 @@ if ( preg_match( '/<h4[^>]*>(.*?)<\/h4>/is', $content, $matches ) ) {
 			// WP-PageNavi プラグインが有効な場合.
 			wp_pagenavi();
 		} elseif ( function_exists( 'the_posts_pagination' ) ) {
-			// プラグインが無効であれば、WordPress標準のページネーションを表示.
+			// WP-PageNavi が利用できない場合は、WordPress 標準のページネーションを使用.
 			the_posts_pagination(
 				array(
 					'mid_size'  => 2,

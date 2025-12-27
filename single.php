@@ -9,193 +9,41 @@ get_header(); ?>
 
 		<main class="l-main p-single">
 		<section class="c-visual c-visual--center-y p-single__mv">
-			<picture>
-			<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/single/single--pc.jpg' ) ); ?>" media="( min-width: 1024px )">
-			<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/single/single--tb.jpg' ) ); ?>" media="( min-width: 768px )">
-			<img class="c-visual__img p-single__mv-img" src="<?php echo esc_url( get_theme_file_uri( '/images/single/single--sp.jpg' ) ); ?>' ) ); ?>" alt="チーズバーガー">
-			</picture>
-			<h1 class="c-visual__title p-single__mv-title c-font--xl c-color--text-inverse">h1 チーズバーガー</h1>
+			<?php if ( has_post_thumbnail() ) : ?>
+				<picture>
+					<?php
+					$thumbnail_id = get_post_thumbnail_id();
+					$thumbnail_pc = wp_get_attachment_image_src( $thumbnail_id, 'full' );
+					$thumbnail_tb = wp_get_attachment_image_src( $thumbnail_id, 'large' );
+					$thumbnail_sp = wp_get_attachment_image_src( $thumbnail_id, 'medium_large' );
+					$image_alt = get_post_meta( $thumbnail_id, '_wp_attachment_image_alt', true );
+					$alt_text = $image_alt ? $image_alt : get_the_title() . 'の画像';
+					?>
+					<?php if ( $thumbnail_pc ) : ?>
+						<source srcset="<?php echo esc_url( $thumbnail_pc[0] ); ?>" media="( min-width: 1024px )">
+					<?php endif; ?>
+					<?php if ( $thumbnail_tb ) : ?>
+						<source srcset="<?php echo esc_url( $thumbnail_tb[0] ); ?>" media="( min-width: 768px )">
+					<?php endif; ?>
+					<?php if ( $thumbnail_sp ) : ?>
+						<img class="c-visual__img p-single__mv-img" src="<?php echo esc_url( $thumbnail_sp[0] ); ?>" alt="<?php echo esc_attr( $alt_text ); ?>">
+					<?php endif; ?>
+				</picture>
+			<?php else : ?>
+				<picture>
+					<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/single/single--pc.jpg' ) ); ?>" media="( min-width: 1024px )">
+					<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/single/single--tb.jpg' ) ); ?>" media="( min-width: 768px )">
+					<img class="c-visual__img p-single__mv-img" src="<?php echo esc_url( get_theme_file_uri( '/images/single/single--sp.jpg' ) ); ?>" alt="<?php echo esc_attr( get_the_title() ); ?>">
+				</picture>
+			<?php endif; ?>
+			<h1 class="c-visual__title p-single__mv-title c-font--xl c-color--text-inverse"><?php the_title(); ?></h1>
 		</section>
 
 		<article class="p-single__body">
-			<h2 class="c-font--l">見出しh2</h2>
-			<p class="p-single__text">
-			Pタグテキスト。Pタグテキスト。Pタグテキスト。Pタグテキスト。Pタグテキスト。Pタグテキスト。Pタグテキスト。Pタグテキスト。Pタグテキスト。Pタグテキスト。Pタグテキスト。Pタグテキスト。Pタグテキスト。Pタグテキスト。Pタグテキスト。Pタグテキスト。Pタグテキスト。Pタグテキスト。Pタグテキスト。Pタグテキスト。Pタグテキスト。Pタグテキスト。Pタグテキスト。Pタグテキスト。
-			</p>
-			<h3 class="c-font--m">見出しh3</h3>
-			<h4 class="c-font--s">見出しh4</h4>
-			<h5 class="c-font--s">見出しh5</h5>
-			<h6 class="c-font--s">見出しh6</h6>
-
-
-			<figure class="c-blockquote c-color--bg-muted">
-			<blockquote cite="#">
-				<p>
-				</p>
-				Blockquote
-				引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ引用タグ
-			</blockquote>
-			<figcaption>
-				出典元： <a href="#" class="c-blockquote__link c-color--text-link">○○○○○○○○○○○○</a>
-			</figcaption>
-			</figure>
-			<div class="c-media__wide">
-			<picture>
-				<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--pc-wide.jpg' ) ); ?>" media="( min-width: 1024px )">
-				<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--tb-wide.jpg' ) ); ?>" media="( min-width: 768px )">
-				<img class="c-media__img c-border--primary" src="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--sp-wide.jpg' ) ); ?>" alt="チーズバーガーとポテトセット">
-			</picture>
-			</div>
-			<article class="c-media__article-right">
-			<picture>
-				<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--pc-article.jpg' ) ); ?>" media="( min-width: 1024px )">
-				<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--tb-article.jpg' ) ); ?>" media="( min-width: 768px )">
-				<img class="c-media__img c-border--primary" src="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--sp-article.jpg' ) ); ?>" alt="チーズバーガーとポテトセット">
-			</picture>
-			<p>
-				テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります
-				テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります
-				テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります
-				テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります
-			</p>
-			</article>
-			<article class="c-media__article-left">
-			<p>
-				テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります
-				テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります
-				テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります
-				テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります テキストが入ります
-			</p>
-			<picture>
-				<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--pc-article.jpg' ) ); ?>" media="( min-width: 1024px )">
-				<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--tb-article.jpg' ) ); ?>" media="( min-width: 768px )">
-				<img class="c-media__img c-border--primary" src="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--sp-article.jpg' ) ); ?>" alt="チーズバーガーとポテトセット">
-			</picture>
-			</article>
-			<div class="c-media__center">
-			<picture>
-				<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--pc-center.jpg' ) ); ?>" media="( min-width: 1024px )">
-				<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--tb-center.jpg' ) ); ?>" media="( min-width: 768px )">
-				<img class="c-media__img c-border--primary" src="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--sp-center.jpg' ) ); ?>" alt="チーズバーガーとポテトセット">
-			</picture>
-			</div>
-
-			<div class="c-grid">
-			<picture>
-				<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--pc-grid.jpg' ) ); ?>" media="( min-width: 1024px )">
-				<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--tb-grid.jpg' ) ); ?>" media="( min-width: 768px )">
-				<img class="c-grid__img c-border--primary" src="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--sp-grid.jpg' ) ); ?>" alt="チーズバーガーとポテトセット">
-			</picture>
-			<picture>
-				<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--pc-grid.jpg' ) ); ?>" media="( min-width: 1024px )">
-				<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--tb-grid.jpg' ) ); ?>" media="( min-width: 768px )">
-				<img class="c-grid__img c-border--primary" src="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--sp-grid.jpg' ) ); ?>" alt="チーズバーガーとポテトセット">
-			</picture>
-			<picture>
-				<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--pc-grid.jpg' ) ); ?>" media="( min-width: 1024px )">
-				<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--tb-grid.jpg' ) ); ?>" media="( min-width: 768px )">
-				<img class="c-grid__img c-border--primary" src="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--sp-grid.jpg' ) ); ?>" alt="チーズバーガーとポテトセット">
-			</picture>
-			<picture>
-				<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--pc-grid.jpg' ) ); ?>" media="( min-width: 1024px )">
-				<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--tb-grid.jpg' ) ); ?>" media="( min-width: 768px )">
-				<img class="c-grid__img c-border--primary" src="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--sp-grid.jpg' ) ); ?>" alt="チーズバーガーとポテトセット">
-			</picture>
-			<picture>
-				<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--pc-grid.jpg' ) ); ?>" media="( min-width: 1024px )">
-				<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--tb-grid.jpg' ) ); ?>" media="( min-width: 768px )">
-				<img class="c-grid__img c-border--primary" src="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--sp-grid.jpg' ) ); ?>" alt="チーズバーガーとポテトセット">
-			</picture>
-			<picture>
-				<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--pc-grid.jpg' ) ); ?>" media="( min-width: 1024px )">
-				<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--tb-grid.jpg' ) ); ?>" media="( min-width: 768px )">
-				<img class="c-grid__img c-border--primary" src="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--sp-grid.jpg' ) ); ?>" alt="チーズバーガーとポテトセット">
-			</picture>
-			<picture>
-				<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--pc-grid.jpg' ) ); ?>" media="( min-width: 1024px )">
-				<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--tb-grid.jpg' ) ); ?>" media="( min-width: 768px )">
-				<img class="c-grid__img c-border--primary" src="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--sp-grid.jpg' ) ); ?>" alt="チーズバーガーとポテトセット">
-			</picture>
-			<picture>
-				<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--pc-grid.jpg' ) ); ?>" media="( min-width: 1024px )">
-				<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--tb-grid.jpg' ) ); ?>" media="( min-width: 768px )">
-				<img class="c-grid__img c-border--primary" src="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--sp-grid.jpg' ) ); ?>" alt="チーズバーガーとポテトセット">
-			</picture>
-			<picture>
-				<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--pc-grid.jpg' ) ); ?>" media="( min-width: 1024px )">
-				<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--tb-grid.jpg' ) ); ?>" media="( min-width: 768px )">
-				<img class="c-grid__img c-border--primary" src="<?php echo esc_url( get_theme_file_uri( '/images/single/burgset--sp-grid.jpg' ) ); ?>" alt="チーズバーガーとポテトセット">
-			</picture>
-			</div>
-
-			<div class="c-list">
-			<div class="c-list__ordered">
-				<ol class="c-list__item">
-				<li>リストリストリスト</li>
-				<li>リストリストリスト
-					<ol class="c-list__nested">
-					<li>リスト2リスト2リスト2</li>
-					<li>リスト2リスト2リスト2</li>
-					</ol>
-				</li>
-				</ol>
-				<ol class="c-list__item">
-				<li>リストリストリスト</li>
-				<li>リストリストリスト</li>
-				</ol>
-			</div>
-			<div class="c-list__unordered">
-				<ul class="c-list__item">
-				<li>リストリストリスト</li>
-				<li>リストリストリスト
-					<ul class="c-list__nested">
-					<li>リスト2リスト2リスト2</li>
-					<li>リスト2リスト2リスト2</li>
-					</ul>
-				</li>
-				</ul>
-				<ul class="c-list__item">
-				<li>リストリストリスト</li>
-				<li>リストリストリスト</li>
-				</ul>
-			</div>
-			</div>
-
-			<pre class="c-code c-color--bg-muted"><code>&lt;html&gt;
-	&lt;head&gt;
-	&lt;/head&gt;
-	&lt;body&gt;
-	&lt;/body&gt;
-&lt;/html&gt;</code></pre>
-
-			<table class="c-table c-color-bg--surface">
-			<tbody>
-				<tr>
-				<td class="c-border--primary">テーブル</td>
-				<td class="c-border--primary">テーブル</td>
-				</tr>
-				<tr>
-				<td class="c-border--primary">テーブル</td>
-				<td class="c-border--primary">テーブル</td>
-				</tr>
-				<tr>
-				<td class="c-border--primary">テーブル</td>
-				<td class="c-border--primary">テーブル</td>
-				</tr>
-				<tr>
-				<td class="c-border--primary">テーブル</td>
-				<td class="c-border--primary">テーブル</td>
-				</tr>
-				<tr>
-				<td class="c-border--primary">テーブル</td>
-				<td class="c-border--primary">テーブル</td>
-				</tr>
-			</tbody>
-			</table>
-
-			<button type="button" class="c-button--grad c-color--text-primary p-single__button">ボタン</button>
-
-			<p class="c-font--bold">boldboldboldboldboldboldbold</p>
+			<?php
+			// 投稿内容を取得して表示
+			the_content();
+			?>
 		</article>
 		</main>
 
