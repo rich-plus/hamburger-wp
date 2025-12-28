@@ -243,6 +243,15 @@ a {
 	align-items: center;
 	flex-shrink: 0;
 	font-weight: 700;
+	opacity: 1;
+  	transition: opacity 0.2s ease;
+  	transform: 0.1s ease;
+}
+.c-button:hover, .c-button--grad:hover {
+  	opacity: 0.85;
+}
+.c-button:active, .c-button--grad:active {
+  	transform: translateY(1px);
 }
 
 .c-button--grad {
@@ -421,13 +430,13 @@ a {
 
 @media screen and (min-width: 768px) {
 	.c-gallery {
-		grid-template-columns: repeat(auto-fit, minmax(349px, 1fr));
+		grid-template-columns: repeat(2, 1fr);
 	}
 }
 
 @media screen and (min-width: 1024px) {
 	.c-gallery {
-		grid-template-columns: repeat(auto-fit, minmax(438px, 1fr));
+		grid-template-columns: repeat(3, 1fr);
 	}
 }
 
@@ -697,6 +706,29 @@ a {
 	font-size: 20px;
 	font-size: 1.25rem;
 }
+.p-sidemenu__item, .p-sidemenu__link {
+  position: relative;
+  display: inline;
+  opacity: 1;
+}
+.p-sidemenu__item::before, .p-sidemenu__link::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 4px;
+  width: 100%;
+  height: 2px;
+  background-color: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.1s ease;
+}
+.p-sidemenu__item:hover, .p-sidemenu__link:hover {
+  opacity: 0.85;
+}
+.p-sidemenu__item:hover::before, .p-sidemenu__link:hover::before {
+  transform: scaleX(1);
+}
 
 .p-sidemenu__overlay {
 	position: fixed;
@@ -763,6 +795,29 @@ a {
 	content: "|";
 	margin: 0 8px;
 }
+.p-footer__link {
+  position: relative;
+  display: inline;
+  opacity: 1;
+}
+.p-footer__link::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 4px;
+  width: 100%;
+  height: 2px;
+  background-color: currentColor;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.1s ease;
+}
+.p-footer__link:hover {
+  opacity: 0.85;
+}
+.p-footer__link:hover::before {
+  transform: scaleX(1);
+}
 
 .p-menu-card {
 	display: flex;
@@ -772,6 +827,11 @@ a {
 	width: 100%;
 	min-height: clamp(642px, calc(37.7932079082rem + 9.9489795918vw), 681px);
 	padding: 13px 16px 16px 16px;
+	transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+.p-menu-card:hover {
+  	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  	transform: translateY(-5px);
 }
 
 @media screen and (min-width: 1024px) {
@@ -1233,7 +1293,10 @@ body.is-open {
 		gap: 15px;
 	}
 }
-
+.p-pagination__item {
+  opacity: 1;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+}
 @media screen and (min-width: 768px) {
 	.p-pagination__item {
 		display: inline-flex;
@@ -1243,7 +1306,12 @@ body.is-open {
 		height: 35px;
 	}
 }
-
+.p-pagination__list li:first-child a:hover {
+  opacity: 0.85;
+}
+.p-pagination__list li:not(:first-child) a:hover {
+  background-color: #F5F5F5;
+}
 .p-pagination__arrows {
 	display: flex;
 	justify-content: space-between;
