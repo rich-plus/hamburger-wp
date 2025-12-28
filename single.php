@@ -16,8 +16,8 @@ get_header(); ?>
 					$thumbnail_pc = wp_get_attachment_image_src( $thumbnail_id, 'full' );
 					$thumbnail_tb = wp_get_attachment_image_src( $thumbnail_id, 'large' );
 					$thumbnail_sp = wp_get_attachment_image_src( $thumbnail_id, 'medium_large' );
-					$image_alt = get_post_meta( $thumbnail_id, '_wp_attachment_image_alt', true );
-					$alt_text = $image_alt ? $image_alt : get_the_title() . 'の画像';
+					$image_alt    = get_post_meta( $thumbnail_id, '_wp_attachment_image_alt', true );
+					$alt_text     = $image_alt ? $image_alt : get_the_title() . 'の画像';
 					?>
 					<?php if ( $thumbnail_pc ) : ?>
 						<source srcset="<?php echo esc_url( $thumbnail_pc[0] ); ?>" media="( min-width: 1024px )">

@@ -373,40 +373,40 @@ add_action( 'pre_get_posts', 'hamburger_search_filter' );
 function hamburger_custom_pagenavi_output( $html ) {
 	// WP-PageNaviのデフォルトHTMLを解析してカスタマイズ
 	// 静的HTMLの構造に合わせる
-	
+
 	// 現在のページと総ページ数を取得
 	global $wp_query;
 	$current_page = max( 1, get_query_var( 'paged' ) );
-	$total_pages = $wp_query->max_num_pages;
-	
+	$total_pages  = $wp_query->max_num_pages;
+
 	if ( $total_pages <= 1 ) {
 		return '';
 	}
-	
+
 	// 画像パス
 	$laquo_img = get_theme_file_uri( '/images/archive/laquo.svg' );
 	$raquo_img = get_theme_file_uri( '/images/archive/raquo.svg' );
-	
+
 	// PC/Tablet用のHTML（数字あり）
-	$numbers_html = '<div class="p-pagination__numbers">';
+	$numbers_html  = '<div class="p-pagination__numbers">';
 	$numbers_html .= '<span class="p-pagination__info">page ' . esc_html( $current_page ) . ' / ' . esc_html( $total_pages ) . '</span>';
-	
+
 	// 前へボタン
 	$prev_link = '';
 	if ( $current_page > 1 ) {
-		$prev_url = get_pagenum_link( $current_page - 1 );
+		$prev_url  = get_pagenum_link( $current_page - 1 );
 		$prev_link = '<a href="' . esc_url( $prev_url ) . '" class="p-pagination__prev"><img src="' . esc_url( $laquo_img ) . '" alt="前のページへ"></a>';
 	} else {
 		$prev_link = '<span class="p-pagination__prev"><img src="' . esc_url( $laquo_img ) . '" alt="前のページへ"></span>';
 	}
 	$numbers_html .= $prev_link;
-	
+
 	// ページ番号リスト
 	$numbers_html .= '<ul class="p-pagination__list">';
-	
+
 	$start_page = max( 1, $current_page - 4 );
-	$end_page = min( $total_pages, $current_page + 4 );
-	
+	$end_page   = min( $total_pages, $current_page + 4 );
+
 	for ( $i = $start_page; $i <= $end_page; $i++ ) {
 		if ( $i == $current_page ) {
 			$numbers_html .= '<li><a href="' . esc_url( get_pagenum_link( $i ) ) . '" class="p-pagination__item c-color--text-inverse c-color--bg-accent c-border--primary" aria-current="page" aria-label="現在のページ、' . esc_attr( $i ) . 'ページ目">' . esc_html( $i ) . '</a></li>';
@@ -414,44 +414,44 @@ function hamburger_custom_pagenavi_output( $html ) {
 			$numbers_html .= '<li><a href="' . esc_url( get_pagenum_link( $i ) ) . '" class="p-pagination__item c-border--primary" aria-label="' . esc_attr( $i ) . 'ページ目へ">' . esc_html( $i ) . '</a></li>';
 		}
 	}
-	
+
 	$numbers_html .= '</ul>';
-	
+
 	// 次へボタン
 	$next_link = '';
 	if ( $current_page < $total_pages ) {
-		$next_url = get_pagenum_link( $current_page + 1 );
+		$next_url  = get_pagenum_link( $current_page + 1 );
 		$next_link = '<a href="' . esc_url( $next_url ) . '" class="p-pagination__next"><img src="' . esc_url( $raquo_img ) . '" alt="次のページへ"></a>';
 	} else {
 		$next_link = '<span class="p-pagination__next"><img src="' . esc_url( $raquo_img ) . '" alt="次のページへ"></span>';
 	}
 	$numbers_html .= $next_link;
 	$numbers_html .= '</div>';
-	
+
 	// Mobile用のHTML（前へ/次へ）
 	$arrows_html = '<div class="p-pagination__arrows">';
-	
+
 	// 前へボタン
 	if ( $current_page > 1 ) {
-		$prev_url = get_pagenum_link( $current_page - 1 );
+		$prev_url     = get_pagenum_link( $current_page - 1 );
 		$arrows_html .= '<a href="' . esc_url( $prev_url ) . '" class="p-pagination__prev" aria-label="前のページへ"><img class="p-pagination__prev-laquo" src="' . esc_url( $laquo_img ) . '" alt="前のページへ">前へ</a>';
 	} else {
 		$arrows_html .= '<span class="p-pagination__prev"><img class="p-pagination__prev-laquo" src="' . esc_url( $laquo_img ) . '" alt="前のページへ">前へ</span>';
 	}
-	
+
 	// 次へボタン
 	if ( $current_page < $total_pages ) {
-		$next_url = get_pagenum_link( $current_page + 1 );
+		$next_url     = get_pagenum_link( $current_page + 1 );
 		$arrows_html .= '<a href="' . esc_url( $next_url ) . '" class="p-pagination__next" aria-label="次のページへ">次へ<img class="p-pagination__next-raquo" src="' . esc_url( $raquo_img ) . '" alt="次のページへ"></a>';
 	} else {
 		$arrows_html .= '<span class="p-pagination__next">次へ<img class="p-pagination__next-raquo" src="' . esc_url( $raquo_img ) . '" alt="次のページへ"></span>';
 	}
-	
+
 	$arrows_html .= '</div>';
-	
+
 	// 最終的なHTML
 	$html = '<nav class="p-pagination c-color--text-secondary">' . $numbers_html . $arrows_html . '</nav>';
-	
+
 	return $html;
 }
 add_filter( 'wp_pagenavi', 'hamburger_custom_pagenavi_output' );
