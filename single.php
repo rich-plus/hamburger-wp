@@ -39,10 +39,18 @@ get_header(); ?>
 			<h1 class="c-visual__title p-single__mv-title c-font--xl c-color--text-inverse"><?php the_title(); ?></h1>
 		</section>
 
-		<article class="p-single__body">
+		<article class="p-single__body" <?php post_class(); ?>>
 			<?php
-			// 投稿内容を取得して表示
+			// 投稿内容を取得して表示.
 			the_content();
+
+			// ページ区切りリンクを表示.
+			wp_link_pages(
+				array(
+					'before' => '<div class="page-links">' . esc_html__( 'Pages:', 'hamburger' ),
+					'after'  => '</div>',
+				)
+			);
 			?>
 		</article>
 		</main>

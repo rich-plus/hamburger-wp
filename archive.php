@@ -74,7 +74,7 @@ get_header(); ?>
 				<h2 class="p-archive__title"><?php echo esc_html( $archive_title ); ?></h2>
 			<?php endif; ?>
 			<?php if ( ! empty( $archive_text ) ) : ?>
-				<p class="p-archive__text"><?php echo $archive_text; ?></p>
+				<p class="p-archive__text"><?php echo esc_html( $archive_text ); ?></p>
 			<?php endif; ?>
 			</div>
 			<div class="p-archive__list">
@@ -85,7 +85,7 @@ get_header(); ?>
 					<!-- 現在の投稿をセット -->
 					<?php the_post(); ?>
 			<!-- 各投稿カードの表示 -->
-			<article class="c-card">
+			<article class="c-card" <?php post_class(); ?>>
 			<!-- 画像の表示 -->
 					<?php if ( has_post_thumbnail() ) : ?>
 				<picture class="c-card__picture">

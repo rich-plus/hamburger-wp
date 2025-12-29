@@ -130,7 +130,7 @@ get_header(); ?>
 						// 前後の空白を削除.
 						$text_content = trim( $text_content );
 					} else {
-						// 見出しがない場合、内容全体をテキストとして使用
+						// 見出しがない場合、内容全体をテキストとして使用.
 						$text_content = wp_strip_all_tags( $content );
 						$text_content = trim( $text_content );
 					}
