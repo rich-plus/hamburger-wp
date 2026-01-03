@@ -12,7 +12,7 @@ get_header(); ?>
 	<picture>
 		<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/top/mv--pc.jpg' ) ); ?>" media="( min-width: 1024px )">
 		<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/top/mv--tb.jpg' ) ); ?>" media="( min-width: 768px )">
-		<img class="c-visual__img p-mv__img" src="<?php echo esc_url( get_theme_file_uri( '/images/top/mv--sp.jpg' ) ); ?>" alt="ハンバーガーショップのメインビジュアル画像">
+		<img class="c-visual__img p-mv__img" src="<?php echo esc_url( get_theme_file_uri( '/images/top/mv--sp.jpg' ) ); ?>" alt="<?php esc_attr_e( '木製テーブルに並べられたハンバーガーの写真', 'hamburger' ); ?>">
 	</picture>
 	<h1 class="c-visual__title p-mv__title c-color--text-inverse">ダミーサイト</h1>
 	</section>
@@ -59,7 +59,7 @@ get_header(); ?>
 	<picture class="p-access__bg">
 		<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/top/access--pc.jpg' ) ); ?>" media="(min-width: 1024px)">
 		<source srcset="<?php echo esc_url( get_theme_file_uri( '/images/top/access--tb.jpg' ) ); ?>" media="(min-width: 768px)">
-		<img src="<?php echo esc_url( get_theme_file_uri( '/images/top/access--sp.jpg' ) ); ?>" alt="店舗周辺の地図">
+		<img src="<?php echo esc_url( get_theme_file_uri( '/images/top/access--sp.jpg' ) ); ?>" alt="<?php esc_attr_e( '店舗周辺の地図', 'hamburger' ); ?>">
 	</picture>
 
 	<div class="p-access__overlay1 c-color--bg-overlay-black-40"></div>

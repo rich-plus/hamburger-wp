@@ -1551,19 +1551,20 @@ body.is-open {
 	リストブロック
 	───────────────────────────────────────────────────────────── */
 
-/* 番号付きリスト：画面幅に応じて左インデントを調整 (番号：18px 分の余白を加算) */
+/* 番号付きリスト：画面幅に応じて左インデントを調整 (番号：19px 分の余白を加算) */
 .l-main ol.wp-block-list {
+	margin-left: 19px;
 	padding-left: clamp(0px, calc(-2.9894770408rem + 12.7551020408vw), 50px);
 }
 /* 箇条書きリスト：画面幅に応じて左インデントを調整 */
 .l-main ul.wp-block-list {
-	padding-left: clamp(0px, calc(-1.9132653061rem + 8.1632653061vw), 32px);
+	padding-left: clamp(0px, calc(-2.9894770408rem + 12.7551020408vw), 50px);
 }
 
 /* ネストされたリストの左インデントを統一 */
 .l-main .wp-block-list ol,
 .l-main .wp-block-list ul {
-	margin-left: 19px;
+	margin-left: 18px;
 }
 
 /* 親項目と子リストの間に上下余白を付ける */
@@ -1582,8 +1583,7 @@ body.is-open {
 	───────────────────────────────────────────────────────────── */
 /* .c-code に対応 */
 .l-main .wp-block-code {
-	padding-block: 50px;
-	padding-left: 50px;
+	padding: 50px;
 	background-color: #F5F5F5; /* c-color--bg-muted の色 */
 }
 
