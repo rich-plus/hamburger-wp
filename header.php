@@ -14,7 +14,6 @@
 	<meta charset="<?php bloginfo( 'charset' ); ?>">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="description" content="<?php bloginfo( 'description' ); ?>">
-	<link rel="icon" href="<?php echo esc_url( get_theme_file_uri( '/images/favicon.png' ) ); ?>" type="image/png">
 	<?php wp_head(); ?>
 </head>
 
@@ -34,6 +33,6 @@
 				</div>
 				<!-- Menuボタン（Tablet/Mobile） -->
 				<button type="button" class="p-hamburger c-font--accent c-color--text-secondary js-hamburger">
-					<span class="p-hamburger__menu">Menu</span>
+					<span class="p-hamburger__menu"><?php esc_html_e( 'Menu', 'hamburger' ); ?></span>
 				</button>
 			</header>

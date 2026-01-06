@@ -1,4 +1,3 @@
-
 <?php
 /**
  * Search template file
@@ -17,7 +16,7 @@ get_header(); ?>
 			</picture>
 			<div class="p-hero__overlay c-color--bg-overlay-black-50"></div>
 			<div class="c-visual__content p-hero__content c-layout__inner c-color--text-inverse">
-				<h1 class="p-hero__title c-font--xl">Search:</h1>
+				<h1 class="p-hero__title c-font--xl"><?php esc_html_e( 'Search:', 'hamburger' ); ?></h1>
 				<h2 class="p-hero__subtitle c-font--s">
 					<!-- 検索キーワードを取得して表示する -->
 					<?php echo esc_html( get_search_query() ); ?>
@@ -148,20 +147,8 @@ get_header(); ?>
 		</section>
 
 		<?php
-		// ページネーション（プラグイン対応）.
-		if ( function_exists( 'wp_pagenavi' ) ) {
-			// WP-PageNavi プラグインが有効な場合.
-			wp_pagenavi();
-		} elseif ( function_exists( 'the_posts_pagination' ) ) {
-			// WP-PageNavi が利用できない場合は、WordPress 標準のページネーションを使用.
-			the_posts_pagination(
-				array(
-					'mid_size'  => 2,
-					'prev_text' => '前へ',
-					'next_text' => '次へ',
-				)
-			);
-		}
+		// ページネーション.
+		hamburger_pagination();
 		?>
 			</main>
 <?php

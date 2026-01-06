@@ -16,7 +16,7 @@ get_header(); ?>
 			</picture>
 			<div class="p-hero__overlay c-color--bg-overlay-black-50"></div>
 			<div class="c-visual__content p-hero__content c-layout__inner c-color--text-inverse">
-			<h1 class="p-hero__title c-font--xl">Menu:</h1>
+			<h1 class="p-hero__title c-font--xl"><?php esc_html_e( 'Menu:', 'hamburger' ); ?></h1>
 			<h2 class="p-hero__subtitle c-font--s">
 				<?php
 					// タームアーカイブ（カテゴリー・タグ・カスタム分類）の場合、ターム名を出力.
@@ -37,49 +37,36 @@ get_header(); ?>
 			// 変数の初期化（未定義エラー防止）.
 			$archive_title = '';
 			$archive_text  = '';
+			$archive_description = '';
 
 			// アーカイブの説明文を取得.
 			$archive_description = get_the_archive_description();
 			// 現在表示しているアーカイブの対象オブジェクトを取得（ターム・投稿タイプなど）.
 			$queried_object = get_queried_object();
-			// 「ジャンル系」として扱うターム名.
-			$group_terms = array( 'Take Out', 'Eat In', 'バーガー', 'サイド', 'ドリンク' );
 
-			// ターム名が取得できる場合.
-			if ( isset( $queried_object->name ) ) {
-
-				$is_group_term = in_array( $queried_object->name, $group_terms, true );
+			// タームアーカイブの場合.
+			if ( isset( $queried_object->name ) && is_tax() ) {
 
 				// タイトル設定.
-				if ( $is_group_term ) {
-					$archive_title = sprintf(
-						/* translators: %s: term name */
-						esc_html__( '%sメニュー', 'hamburger' ),
-						$queried_object->name
-					);
-				} else {
-					$archive_title = $queried_object->name;
-				}
+				$archive_title = sprintf(
+					/* translators: %s: term name */
+					esc_html__( '%sメニュー', 'hamburger' ),
+					$queried_object->name
+				);
 
 				// 説明文設定.
 				if ( ! empty( $archive_description ) ) {
 					// 説明文が入力されている場合.
 					$archive_text = $archive_description;
-				} elseif ( $is_group_term ) {
+				} else {
 					// 説明文が未入力の場合.
 					$archive_text = sprintf(
 						/* translators: %s: term name */
 						esc_html__( '当店で提供している%sメニューの一覧です。', 'hamburger' ),
 						$queried_object->name
 					);
-				} else {
-					$archive_text = sprintf(
-						/* translators: %s: term name */
-						esc_html__( '%sをご紹介します。', 'hamburger' ),
-						$queried_object->name
-					);
 				}
-				// ターム名が取得できない場合のフォールバック.
+				// 投稿タイプアーカイブの場合.
 			} else {
 				$archive_title = esc_html__( '当店のメニューについて', 'hamburger' );
 				$archive_text  = esc_html__( '当店で提供しているメニューの一覧です。', 'hamburger' );
@@ -150,9 +137,9 @@ get_header(); ?>
 					<h3 class="c-card__title"><?php the_title(); ?></h3>
 
 					<?php
-					/**
+					/*
 					 * NOTE:
- 					 * 一覧カード表示において、本文内の最初の見出し・本文を抽出する実装も行いましたが、
+					 * 一覧カード表示において、本文内の最初の見出し・本文を抽出する実装も行いましたが、
 					 * 運用性と保守性を考慮し、ポートフォリオ版では WordPress 標準の「抜粋」を使用しています。
 					 */
 
@@ -227,20 +214,8 @@ get_header(); ?>
 		</section>
 
 		<?php
-		// ページネーション（プラグイン対応）.
-		if ( function_exists( 'wp_pagenavi' ) ) {
-			// WP-PageNavi プラグインが有効な場合.
-			wp_pagenavi();
-		} elseif ( function_exists( 'the_posts_pagination' ) ) {
-			// WP-PageNavi が利用できない場合は、WordPress 標準のページネーションを使用.
-			the_posts_pagination(
-				array(
-					'mid_size'  => 2,
-					'prev_text' => '前へ',
-					'next_text' => '次へ',
-				)
-			);
-		}
+		// ページネーション.
+		hamburger_pagination();
 		?>
 		</main>
 

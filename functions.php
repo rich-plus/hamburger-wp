@@ -43,6 +43,11 @@ function hamburger_theme_support() {
 	add_image_size( 'archive-card-tb', 379, 355, true );
 	add_image_size( 'archive-card-sp', 337, 231, true );
 
+	// Register custom image sizes for single and page mainvisual.
+	add_image_size( 'single-mv-pc', 1553, 500, true );
+	add_image_size( 'single-mv-tb', 834, 505, true );
+	add_image_size( 'single-mv-sp', 375, 225, true );
+
 	// Register navigation menus.
 	register_nav_menus(
 		array(
@@ -135,7 +140,7 @@ add_action( 'init', 'hamburger_menu_init' );
 function hamburger_menu_init() {
 	// ラベル（管理画面に表示される名前）.
 	$labels = array(
-		// _x()は、同じ文字列でも文脈によって意味が変わる場合に、翻訳者に文脈を伝えるための関数です.
+		// _x()は、同じ文字列でも文脈によって意味が変わる場合に、翻訳者に文脈を伝えるための関数.
 		'name'               => _x( 'Menus', 'post type general name', 'hamburger' ),
 		'singular_name'      => _x( 'Menu', 'post type singular name', 'hamburger' ),
 		'menu_name'          => _x( 'Menus', 'admin menu', 'hamburger' ),

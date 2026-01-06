@@ -22,6 +22,7 @@ body {
 	background-color: #FFFDFA;
 	box-sizing: border-box;
 	line-height: 1.6;
+	line-break: strict;
 }
 
 ul {
@@ -74,7 +75,12 @@ a {
 }
 
 .c-font--xl {
-	font-size: clamp(36px, calc(0.8150510204rem + 6.1224489796vw), 60px);
+  font-size: clamp(28px, calc(0.5542091837rem + 5.1020408163vw), 48px);
+}
+@media screen and ( min-width: 1024px ) {
+  .c-font--xl {
+    font-size: clamp(48px, calc(2.1428571429rem + 1.3392857143vw), 60px);
+  }
 }
 
 .c-font--l {
@@ -201,7 +207,7 @@ a {
 @media screen and (min-width: 1024px) {
 	.c-layout__sidebar {
 		flex: 1.92;
-		min-width: 230px;
+		min-width: 280px;
 	}
 }
 
@@ -252,10 +258,14 @@ a {
 	transition: opacity 0.2s ease;
 	transform: 0.1s ease;
 }
-.c-button:hover, .c-button--grad:hover {
+
+.c-button:hover,
+.c-button--grad:hover {
 	opacity: 0.85;
 }
-.c-button:active, .c-button--grad:active {
+
+.c-button:active,
+.c-button--grad:active {
 	transform: translateY(1px);
 }
 
@@ -711,28 +721,34 @@ a {
 	font-size: 20px;
 	font-size: 1.25rem;
 }
-.p-sidemenu__item, .p-sidemenu__link {
-	position: relative;
-	display: inline;
-	opacity: 1;
+
+.p-sidemenu__item,
+.p-sidemenu__link {
+  position: relative;
+  display: inline-block;
+  opacity: 1;
+  width: 100%;
+  min-width: 100%;
+  padding: 4px 8px;
+  margin: -4px -8px; /* padding分の余白を調整 */
+  border-radius: 4px;
+  transition: background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
 }
-.p-sidemenu__item::before, .p-sidemenu__link::before {
-	content: "";
-	position: absolute;
-	left: 0;
-	bottom: 4px;
-	width: 100%;
-	height: 2px;
-	background-color: currentColor;
-	transform: scaleX(0);
-	transform-origin: left;
-	transition: transform 0.1s ease;
+
+.p-sidemenu__link {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
-.p-sidemenu__item:hover, .p-sidemenu__link:hover {
+
+.p-sidemenu__item:hover,
+.p-sidemenu__link:hover {
 	opacity: 0.85;
+	background-color: rgba(0, 0, 0, 0.2);
+	color: #3C2A10;
 }
-.p-sidemenu__item:hover::before, .p-sidemenu__link:hover::before {
-	transform: scaleX(1);
+.p-sidemenu__link:hover {
+	white-space: normal; /* 折り返しを許可 */
 }
 
 .p-sidemenu__overlay {
@@ -800,11 +816,13 @@ a {
 	content: "|";
 	margin: 0 8px;
 }
+
 .p-footer__link {
 	position: relative;
 	display: inline;
 	opacity: 1;
 }
+
 .p-footer__link::before {
 	content: "";
 	position: absolute;
@@ -817,9 +835,11 @@ a {
 	transform-origin: center;
 	transition: transform 0.1s ease;
 }
+
 .p-footer__link:hover {
 	opacity: 0.85;
 }
+
 .p-footer__link:hover::before {
 	transform: scaleX(1);
 }
@@ -834,6 +854,7 @@ a {
 	padding: 13px 16px 16px 16px;
 	transition: box-shadow 0.25s ease, transform 0.25s ease;
 }
+
 .p-menu-card:hover {
 	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 	transform: translateY(-5px);
@@ -1114,12 +1135,17 @@ a {
 }
 
 .p-single__mv-title {
-	left: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.3116);
+  padding: 6px 12px;
+  border-radius: 8px;
+  display: inline-block;
 }
 
 @media screen and (min-width: 375px) {
 	.p-single__mv-title {
-		left: clamp(25px, calc(-2.0846619898rem + 15.5612244898vw), 86px);
+    	left: clamp(8px, calc(-4.1635841837rem + 19.8979591837vw), 86px);
+		margin-right: clamp(8px, calc(-4.1635841837rem + 19.8979591837vw), 86px);
 	}
 }
 
@@ -1298,10 +1324,12 @@ body.is-open {
 		gap: 15px;
 	}
 }
+
 .p-pagination__item {
 	opacity: 1;
 	transition: background-color 0.15s ease, opacity 0.15s ease;
 }
+
 @media screen and (min-width: 768px) {
 	.p-pagination__item {
 		display: inline-flex;
@@ -1311,12 +1339,17 @@ body.is-open {
 		height: 35px;
 	}
 }
-.p-pagination__list li:first-child a:hover {
+
+/* 現在のページのhover: opacityをかける */
+.p-pagination__list li a[aria-current="page"]:hover {
 	opacity: 0.85;
 }
-.p-pagination__list li:not(:first-child) a:hover {
+
+/* 現在のページ以外のhover: 背景色を変える */
+.p-pagination__list li a:not([aria-current="page"]):hover {
 	background-color: #F5F5F5;
 }
+
 .p-pagination__arrows {
 	display: flex;
 	justify-content: space-between;
@@ -1363,8 +1396,14 @@ body.is-open {
 /* c-font--xl に対応 */
 .l-main h1.wp-block-heading {
 	font-weight: 700;
-	font-size: clamp(36px, calc(0.8150510204rem + 6.1224489796vw), 60px);
+  	font-size: clamp(28px, calc(0.5542091837rem + 5.1020408163vw), 48px);
 }
+@media screen and ( min-width: 1024px ) {
+	.l-main h1.wp-block-heading {
+    font-size: clamp(48px, calc(2.1428571429rem + 1.3392857143vw), 60px);
+	}
+}
+
 
 /* c-font--l に対応 */
 .l-main h2.wp-block-heading {
@@ -1396,7 +1435,8 @@ body.is-open {
 	flex-direction: column;
 	gap: clamp(30px, calc(0.0215242347rem + 7.9081632653vw), 61px);
 	padding: clamp(30px, 0.6792091837rem + 5.1020408163vw, 50px) clamp(16px, -1.3915816327rem + 10.2040816327vw, 56px) clamp(27px, -0.1061862245rem + 7.6530612245vw, 57px) clamp(20px, -0.5436862245rem + 7.6530612245vw, 50px);
-	background-color: #F5F5F5; /* c-color--bg-muted の色 */
+	background-color: #F5F5F5;
+	/* c-color--bg-muted の色 */
 }
 
 @media screen and (min-width: 1024px) {
@@ -1414,7 +1454,8 @@ body.is-open {
 /* c-blockquote__link に対応 */
 .l-main .wp-block-quote a {
 	text-decoration: underline;
-	color: #4A6C9B; /* c-color--text-link の色 */
+	color: #4A6C9B;
+	/* c-color--text-link の色 */
 }
 
 /* ────────────────────────────────────────────────────────────
@@ -1425,7 +1466,8 @@ body.is-open {
 	display: block;
 	width: 100%;
 	height: auto;
-	border: 1px solid #707070; /* c-border--primary */
+	border: 1px solid #707070;
+	/* c-border--primary */
 }
 
 /* ワイド画像（全幅・幅広配置） */
@@ -1458,7 +1500,8 @@ body.is-open {
 	display: block;
 	width: 100%;
 	height: auto;
-	border: 1px solid #707070; /* c-border--primary */
+	border: 1px solid #707070;
+	/* c-border--primary */
 }
 
 /* .c-media__article-right に対応 */
@@ -1475,7 +1518,7 @@ body.is-open {
 	grid-template-columns: 1fr 42.8%;
 }
 
-@media screen and ( min-width: 1024px ) {
+@media screen and (min-width: 1024px) {
 	.l-main .wp-block-media-text {
 		gap: clamp(21px, calc(-0.0446428571rem + 2.1205357143vw), 40px);
 	}
@@ -1497,7 +1540,8 @@ body.is-open {
 	display: block;
 	width: 100%;
 	height: auto;
-	border: 1px solid #707070; /* c-border--primary */
+	border: 1px solid #707070;
+	/* c-border--primary */
 }
 
 /* 画像と画像の間の余白設定 */
@@ -1507,7 +1551,8 @@ body.is-open {
 
 /* ベース：スマホ（1列） */
 .l-main .wp-block-gallery.has-nested-images figure.wp-block-image {
-	flex-grow: 0; /* 画像の拡大を防ぐ */
+	flex-grow: 0;
+	/* 画像の拡大を防ぐ */
 	flex-basis: 100%;
 }
 
@@ -1520,15 +1565,18 @@ body.is-open {
 }
 
 /* タブレット（2列） */
-@media screen and ( min-width: 768px ) {
+@media screen and (min-width: 768px) {
+
 	/* 中央揃え */
 	.l-main .wp-block-gallery.has-nested-images {
 		padding-left: 20px;
-		}
+	}
+
 	/* 2列：幅50%から gap: 20px; 分を引く */
 	.l-main .wp-block-gallery.has-nested-images figure.wp-block-image {
 		flex-basis: calc(50% - 20px);
 	}
+
 	/* 画像比率 */
 	.l-main .wp-block-gallery.has-nested-images figure.wp-block-image img {
 		aspect-ratio: 349 / 205;
@@ -1536,11 +1584,13 @@ body.is-open {
 }
 
 /* PC（3列） */
-@media screen and ( min-width: 1024px ) {
+@media screen and (min-width: 1024px) {
+
 	/* 3列：幅約33.3%から gap: 20px; 分を引く */
 	.l-main .wp-block-gallery.has-nested-images figure.wp-block-image {
 		flex-basis: calc(33.333% - 20px);
 	}
+
 	/* 画像比率 */
 	.l-main .wp-block-gallery.has-nested-images figure.wp-block-image img {
 		aspect-ratio: 438 / 257;
@@ -1556,6 +1606,7 @@ body.is-open {
 	margin-left: 19px;
 	padding-left: clamp(0px, calc(-2.9894770408rem + 12.7551020408vw), 50px);
 }
+
 /* 箇条書きリスト：画面幅に応じて左インデントを調整 */
 .l-main ul.wp-block-list {
 	padding-left: clamp(0px, calc(-2.9894770408rem + 12.7551020408vw), 50px);
@@ -1568,23 +1619,25 @@ body.is-open {
 }
 
 /* 親項目と子リストの間に上下余白を付ける */
-.l-main .wp-block-list > li > ul,
-.l-main .wp-block-list > li > ol {
+.l-main .wp-block-list>li>ul,
+.l-main .wp-block-list>li>ol {
 	padding-block: 17px;
 }
 
 /* 最後の子リストだけ下余白を削除 */
-.l-main .wp-block-list > li:last-child > ul,
-.l-main .wp-block-list > li:last-child > ol {
+.l-main .wp-block-list>li:last-child>ul,
+.l-main .wp-block-list>li:last-child>ol {
 	margin-bottom: 0;
 }
+
 /* ────────────────────────────────────────────────────────────
 	コードブロック
 	───────────────────────────────────────────────────────────── */
 /* .c-code に対応 */
 .l-main .wp-block-code {
 	padding: 50px;
-	background-color: #F5F5F5; /* c-color--bg-muted の色 */
+	background-color: #F5F5F5;
+	/* c-color--bg-muted の色 */
 }
 
 /* ────────────────────────────────────────────────────────────
@@ -1594,24 +1647,30 @@ body.is-open {
 .l-main .wp-block-table table {
 	width: 100%;
 	border-collapse: collapse;
-	background-color: #FFF; /* c-color-bg--surface の色 */
+	background-color: #FFF;
+	/* c-color-bg--surface の色 */
 }
+
 .l-main .wp-block-table td {
 	height: 77px;
 	padding-block: 28px 24px;
 	padding-left: clamp(23px, calc(1.0189732143rem + 1.7857142857vw), 30px);
-	border: 1px solid #707070; /* c-border--primary */
+	border: 1px solid #707070;
+	/* c-border--primary */
 }
+
 .l-main .wp-block-table td:first-child {
 	width: clamp(140px, calc(4.2657844388rem + 19.1326530612vw), 215px);
 	padding-block: 28px 24px;
 	padding-left: clamp(23px, calc(1.0189732143rem + 1.7857142857vw), 30px);
 }
-@media screen and ( min-width: 1024px ) {
+
+@media screen and (min-width: 1024px) {
 	.l-main .wp-block-table td:first-child {
 		width: clamp(215px, calc(-1.4910714286rem + 23.3258928571vw), 424px);
 	}
 }
+
 .l-main .wp-block-table td:last-child {
 	padding-left: 30px;
 }
@@ -1628,7 +1687,8 @@ body.is-open {
 	font-weight: 700;
 	border: 1px solid #707070;
 	background: linear-gradient(90deg, #F2EDE9 0%, #DED8D3 100%);
-	color: #3C2A10; /* c-color--text-primary */
+	color: #3C2A10;
+	/* c-color--text-primary */
 	padding: 10px 20px;
 	border-radius: 20px;
 	aspect-ratio: 70/17;
@@ -1636,15 +1696,18 @@ body.is-open {
 	transition: opacity 0.2s ease;
 	transform: 0.1s ease;
 }
+
 .l-main .wp-block-button__link:hover {
 	opacity: 0.85;
 }
+
 .l-main .wp-block-button__link:active {
 	transform: translateY(1px);
 }
-@media screen and ( min-width: 375px ) {
+
+@media screen and (min-width: 375px) {
 	.l-main .wp-block-button__link {
-	width: clamp(335px, calc(15.3172831633rem + 23.9795918367vw), 429px);
+		width: clamp(335px, calc(15.3172831633rem + 23.9795918367vw), 429px);
 	}
 }
 

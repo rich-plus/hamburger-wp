@@ -10,8 +10,8 @@ get_header();
 
 <main class="l-main">
 	<div style="padding: 20px">
-		<h1>404 Not Found</h1>
-		<p>お探しのページが見つかりませんでした。</p>
+		<h1><?php esc_html_e( '404 Not Found', 'hamburger' ); ?></h1>
+		<p><?php esc_html_e( 'お探しのページが見つかりませんでした。', 'hamburger' ); ?></p>
 	</div>
 </main>
 

@@ -13,9 +13,9 @@
 
 
 <aside class="c-layout__sidebar">
-	<nav class="p-sidemenu c-color--text-secondary c-color--bg-secondary" aria-label="サイドメニュー">
+	<nav class="p-sidemenu c-color--text-secondary c-color--bg-secondary" aria-label="<?php esc_attr_e( 'サイドメニュー', 'hamburger' ); ?>">
 	<!-- Menu (PC) -->
-	<h2 class="p-sidemenu__title c-font--accent">Menu</h2>
+	<h2 class="p-sidemenu__title c-font--accent"><?php esc_html_e( 'Menu', 'hamburger' ); ?></h2>
 
 	<!-- Menu List (共通) -->
 	<?php

@@ -10,7 +10,7 @@
 
 	<footer class="l-footer">
 		<div class="p-footer c-color--text-inverse">
-			<nav class="p-footer__nav" aria-label="フッターメニュー">
+			<nav class="p-footer__nav" aria-label="<?php esc_attr_e( 'フッターメニュー', 'hamburger' ); ?>">
 				<?php
 					wp_nav_menu(
 						array(
