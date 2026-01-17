@@ -89,7 +89,7 @@ function hamburger_script() {
 		'hamburger-style',
 		get_stylesheet_uri(),
 		array( 'hamburger-ress', 'hamburger-google-fonts' ),
-		'1.0.0'
+		'1.0.1'
 	);
 
 	// jQuery (WordPress built-in).
