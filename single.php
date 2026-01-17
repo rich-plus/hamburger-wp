@@ -19,7 +19,7 @@ get_header(); ?>
 					$thumbnail_tb = wp_get_attachment_image_src( $thumbnail_id, 'single-mv-tb' );
 					$thumbnail_sp = wp_get_attachment_image_src( $thumbnail_id, 'single-mv-sp' );
 					// アイキャッチ画像に設定された alt テキストを取得.
-					$image_alt    = get_post_meta( $thumbnail_id, '_wp_attachment_image_alt', true );
+					$image_alt = get_post_meta( $thumbnail_id, '_wp_attachment_image_alt', true );
 					// alt が未設定の場合は投稿タイトルを取得.
 					$alt_text = $image_alt ? $image_alt : sprintf(
 						/* translators: %s: post title */
@@ -55,14 +55,6 @@ get_header(); ?>
 			<?php
 			// 投稿内容を取得して表示.
 			the_content();
-
-			// ページ区切りリンクを表示.
-			wp_link_pages(
-				array(
-					'before' => '<div class="page-links">' . esc_html__( 'Pages:', 'hamburger' ),
-					'after'  => '</div>',
-				)
-			);
 			?>
 		</article>
 		</main>

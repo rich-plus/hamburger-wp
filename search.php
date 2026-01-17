@@ -40,7 +40,7 @@ get_header(); ?>
 						/* translators: %1$s: search keyword, %2$d: number of results */
 						esc_html__( '「%1$s」の検索結果：%2$d件', 'hamburger' ),
 						esc_html( $search_query ),
-						$search_count
+						absint( $search_count )
 					);
 					?>
 				<?php else : ?>
@@ -75,6 +75,10 @@ get_header(); ?>
 				<?php endif; ?>
 			</p>
 			</div>
+
+			<!-- 並び替えボタン -->
+			<?php get_template_part( 'template-parts/archive/sort' ); ?>
+
 			<div class="p-archive__list">
 			<!-- 投稿があるか確認 -->
 			<?php if ( have_posts() ) : ?>
@@ -83,63 +87,7 @@ get_header(); ?>
 				while ( have_posts() ) :
 					the_post();
 					?>
-			<!-- 投稿カードの表示 -->
-			<article class="c-card">
-			<!-- 画像の表示 -->
-					<?php if ( has_post_thumbnail() ) : ?>
-				<picture class="c-card__picture">
-					<!-- 投稿にアイキャッチ画像がある場合 -->
-					<!-- PC/Tablet/SP用の画像サイズを取得して表示( functions.php にカスタム画像サイズを設定) -->
-						<?php
-						$thumbnail_id = get_post_thumbnail_id(); // アイキャッチ画像のIDを取得.
-						// functions.php で定義したカスタム画像サイズを取得.
-						$thumbnail_pc = wp_get_attachment_image_src( $thumbnail_id, 'archive-card-pc' );
-						$thumbnail_tb = wp_get_attachment_image_src( $thumbnail_id, 'archive-card-tb' );
-						$thumbnail_sp = wp_get_attachment_image_src( $thumbnail_id, 'archive-card-sp' );
-						// アイキャッチ画像に設定された alt テキストを取得.
-						$image_alt = get_post_meta( $thumbnail_id, '_wp_attachment_image_alt', true );
-						// alt が未設定の場合は投稿タイトルを取得.
-						$alt_text = $image_alt ? $image_alt : sprintf(
-							/* translators: %s: post title */
-							__( '%sの画像', 'hamburger' ),
-							get_the_title()
-						);
-						?>
-					<!-- 画面サイズに応じて取得した画像サイズのURLを出力（返り値は配列：[0]=>URL, [1]=>幅, [2]=>高さ） -->
-						<?php if ( $thumbnail_pc ) : ?>
-						<source srcset="<?php echo esc_url( $thumbnail_pc[0] ); ?>" media="( min-width: 1024px )">
-						<?php endif; ?>
-						<?php if ( $thumbnail_tb ) : ?>
-						<source srcset="<?php echo esc_url( $thumbnail_tb[0] ); ?>" media="( min-width: 768px )">
-						<?php endif; ?>
-						<img
-							class="c-card__img"
-							src="<?php echo esc_url( $thumbnail_sp ? $thumbnail_sp[0] : ( $thumbnail_tb ? $thumbnail_tb[0] : $thumbnail_pc[0] ) ); ?>"
-							alt="<?php echo esc_attr( $alt_text ); ?>">
-				</picture>
-					<?php else : ?>
-				<picture class="c-card__picture">
-					<!-- 投稿にアイキャッチ画像がない場合 -->
-					<!-- デフォルト画像（No image画像）を取得して表示 -->
-					<img class="c-card__img" src="<?php echo esc_url( get_theme_file_uri( '/images/archive/noimage.jpg' ) ); ?>" alt="<?php esc_attr_e( '画像が登録されていません', 'hamburger' ); ?>">
-				</picture>
-			<?php endif; ?>
-				<div class="c-card__content c-color--bg-accent">
-				<div class="c-card__body c-color--text-inverse">
-					<!-- 投稿タイトルを表示 -->
-					<h3 class="c-card__title"><?php the_title(); ?></h3>
-
-					<!-- 抜粋をカード本文用のテキストとして表示（未入力時は自動生成） -->
-					<p class="c-card__text">
-						<?php echo esc_html( wp_trim_words( get_the_excerpt(), 80, '...' ) ); ?>
-					</p>
-				</div>
-				<div class="c-card__footer">
-					<!-- この投稿の詳細ページ（single.php）へ遷移するボタン型リンク -->
-					<a href="<?php the_permalink(); ?>" class="c-card__button c-button c-color--text-secondary c-color--bg-surface js-fade-link">詳しく見る</a>
-				</div>
-				</div>
-			</article>
+					<?php get_template_part( 'template-parts/content', 'archive' ); ?>
 			<?php endwhile; ?>
 			<!-- 投稿がない場合のメッセージは、検索結果ヘッダー側に表示しているためここでは未設定 -->
 			<?php endif; ?>
@@ -150,7 +98,7 @@ get_header(); ?>
 		// ページネーション.
 		hamburger_pagination();
 		?>
-			</main>
+		</main>
 <?php
 get_sidebar();
 get_footer();

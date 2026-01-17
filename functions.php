@@ -172,7 +172,7 @@ function hamburger_menu_init() {
 		'menu_position'      => null, // 管理画面の左サイドバーでの表示位置：null:デフォルト位置（自動的に下に追加）, 数値：位置を指定（目安 5:投稿の下,20:固定ページの下,60:外観の下）.
 		'show_in_rest'       => true, // REST APIに公開。ブロックエディタ（Gutenberg）対応のためtrue推奨.
 		'menu_icon'          => 'dashicons-food', // 管理画面の左サイドバーに表示されるアイコン.
-		'supports'           => array( 'title', 'editor', 'thumbnail', 'excerpt' ), // 機能リスト(タイトル、説明文、アイキャッチ画像、抜粋).
+		'supports'           => array( 'title', 'editor', 'thumbnail', 'excerpt', 'page-attributes' ), // 機能リスト(タイトル、説明文、アイキャッチ画像、抜粋、メニュー順).
 	);
 
 	register_post_type( 'menu', $args );
@@ -362,6 +362,7 @@ add_filter( 'nav_menu_submenu_css_class', 'hamburger_sidebar_nav_menu_submenu_cs
  * @return void
  */
 function hamburger_search_filter( $query ) {
+	// サイト内検索をカスタム投稿タイプ"Menu"だけに限定するためのフック処理.
 	if ( ! is_admin() && $query->is_main_query() && $query->is_search() ) {
 		$query->set( 'post_type', 'menu' );
 	}
@@ -369,94 +370,184 @@ function hamburger_search_filter( $query ) {
 add_action( 'pre_get_posts', 'hamburger_search_filter' );
 
 /**
- * WP-PageNaviのHTML構造をカスタマイズ
- * 静的HTMLと同じ構造に変更
+ * Set posts per page and handle sorting for archive and search pages.
  *
- * @param string $html The pagination HTML.
- * @return string Modified HTML.
+ * @param WP_Query $query The WordPress query object.
+ * @return void
  */
-function hamburger_custom_pagenavi_output( $html ) {
-	// WP-PageNaviのデフォルトHTMLを解析してカスタマイズ.
-	// 静的HTMLの構造に合わせる.
+function hamburger_archive_query_modify( $query ) {
+	if ( ! is_admin() && $query->is_main_query() ) {
+		// アーカイブページまたは検索結果ページの場合.
+		if ( $query->is_archive() || $query->is_search() ) {
+			// 1ページあたりの表示件数を6件に設定.
+			$query->set( 'posts_per_page', 6 );
 
-	// 現在のページと総ページ数を取得.
-	global $wp_query;
-	$current_page = max( 1, get_query_var( 'paged' ) );
-	$total_pages  = $wp_query->max_num_pages;
+			// URLパラメータから並び替えを取得.
+			$orderby = isset( $_GET['orderby'] ) ? sanitize_text_field( wp_unslash( $_GET['orderby'] ) ) : 'date';
+			$order   = isset( $_GET['order'] ) ? strtoupper( sanitize_text_field( wp_unslash( $_GET['order'] ) ) ) : 'DESC';
 
+			// 並び替えを設定.
+			$query->set( 'orderby', $orderby );
+			$query->set( 'order', $order );
+		}
+	}
+}
+add_action( 'pre_get_posts', 'hamburger_archive_query_modify' );
+
+/**
+ * Generates custom pagination HTML for the theme.
+ *
+ * This function builds pagination markup manually using the current
+ * query information instead of relying on WP-PageNavi's default HTML.
+ * It outputs the same structure whether WP-PageNavi is active or not.
+ *
+ * - Uses the main query by default
+ * - Supports custom WP_Query objects
+ * - Outputs both PC (numbered) and mobile (prev/next) pagination
+ * - All dynamic values are properly escaped
+ *
+ * @param string        $html  HTML output from WP-PageNavi (accepted for compatibility, not used).
+ * @param WP_Query|null $query Query object used for pagination. Defaults to main query.
+ * @return string              Fully escaped pagination HTML.
+ */
+function hamburger_customize_pagination( $html = '', $query = null ) {
+	// クエリ未指定時はメインクエリを使用.
+	if ( null === $query ) {
+		global $wp_query;
+		$query = $wp_query;
+	}
+
+	// 現在ページ（1以上に補正）.
+	$paged = $query->get( 'paged' )
+		? (int) $query->get( 'paged' )
+		: (int) get_query_var( 'paged' );
+	$paged = max( 1, $paged );
+
+	// 総ページ数.
+	$total_pages = (int) $query->max_num_pages;
+
+	// 1ページのみの場合は表示しない.
 	if ( $total_pages <= 1 ) {
 		return '';
 	}
 
-	// 画像パス.
+	// 矢印アイコンのURL.
 	$laquo_img = get_theme_file_uri( '/images/archive/laquo.svg' );
 	$raquo_img = get_theme_file_uri( '/images/archive/raquo.svg' );
 
-	// PC/Tablet用のHTML（数字あり）.
-	$numbers_html  = '<div class="p-pagination__numbers">';
-	$numbers_html .= '<span class="p-pagination__info">page ' . esc_html( $current_page ) . ' / ' . esc_html( $total_pages ) . '</span>';
+	/*
+	========================================
+		PC / Tablet : 数字ページネーション
+	========================================
+	*/
 
-	// 前へボタン.
-	$prev_link = '';
-	if ( $current_page > 1 ) {
-		$prev_url  = get_pagenum_link( $current_page - 1 );
-		$prev_link = '<a href="' . esc_url( $prev_url ) . '" class="p-pagination__prev"><img src="' . esc_url( $laquo_img ) . '" alt="前のページへ"></a>';
+	$numbers_html  = '<div class="p-pagination__numbers">';
+	$numbers_html .= '<span class="p-pagination__info">';
+	$numbers_html .= sprintf(
+		/* translators: 1: current page, 2: total pages */
+		esc_html__( 'page %1$d / %2$d', 'hamburger' ),
+		$paged,
+		$total_pages
+	);
+	$numbers_html .= '</span>';
+
+	// 前のページ.
+	if ( $paged > 1 ) {
+		$numbers_html .= '<a href="' . esc_url( get_pagenum_link( $paged - 1 ) ) . '" class="p-pagination__prev is-active">';
+		$numbers_html .= '<img src="' . esc_url( $laquo_img ) . '" alt="' . esc_attr__( '前のページへ', 'hamburger' ) . '">';
+		$numbers_html .= '</a>';
 	} else {
-		$prev_link = '<span class="p-pagination__prev"><img src="' . esc_url( $laquo_img ) . '" alt="前のページへ"></span>';
+		$numbers_html .= '<span class="p-pagination__prev is-disabled">';
+		$numbers_html .= '<img src="' . esc_url( $laquo_img ) . '" alt="' . esc_attr__( '前のページへ', 'hamburger' ) . '">';
+		$numbers_html .= '</span>';
 	}
-	$numbers_html .= $prev_link;
 
 	// ページ番号リスト.
 	$numbers_html .= '<ul class="p-pagination__list">';
 
-	$start_page = max( 1, $current_page - 4 );
-	$end_page   = min( $total_pages, $current_page + 4 );
+	$start_page = max( 1, $paged - 4 );
+	$end_page   = min( $total_pages, $paged + 4 );
 
 	for ( $i = $start_page; $i <= $end_page; $i++ ) {
-		if ( $i == $current_page ) {
-			$numbers_html .= '<li><a href="' . esc_url( get_pagenum_link( $i ) ) . '" class="p-pagination__item c-color--text-inverse c-color--bg-accent c-border--primary" aria-current="page" aria-label="現在のページ、' . esc_attr( $i ) . 'ページ目">' . esc_html( $i ) . '</a></li>';
+		if ( $i === $paged ) {
+			// 現在ページ.
+			$numbers_html .= '<li>';
+			/* translators: %d is the current page number. */
+			$numbers_html .= '<a href="' . esc_url( get_pagenum_link( $i ) ) . '" class="p-pagination__item c-color--text-inverse c-color--bg-accent c-border--primary" aria-current="page" aria-label="' . esc_attr( sprintf( __( '現在のページ、%dページ目', 'hamburger' ), $i ) ) . '">';
+			$numbers_html .= esc_html( $i );
+			$numbers_html .= '</a>';
+			$numbers_html .= '</li>';
 		} else {
-			$numbers_html .= '<li><a href="' . esc_url( get_pagenum_link( $i ) ) . '" class="p-pagination__item c-border--primary" aria-label="' . esc_attr( $i ) . 'ページ目へ">' . esc_html( $i ) . '</a></li>';
+			// 通常ページ.
+			$numbers_html .= '<li>';
+			/* translators: %d is the target page number. */
+			$numbers_html .= '<a href="' . esc_url( get_pagenum_link( $i ) ) . '" class="p-pagination__item c-border--primary" aria-label="' . esc_attr( sprintf( __( '%dページ目へ', 'hamburger' ), $i ) ) . '">';
+			$numbers_html .= esc_html( $i );
+			$numbers_html .= '</a>';
+			$numbers_html .= '</li>';
 		}
 	}
 
 	$numbers_html .= '</ul>';
 
-	// 次へボタン.
-	$next_link = '';
-	if ( $current_page < $total_pages ) {
-		$next_url  = get_pagenum_link( $current_page + 1 );
-		$next_link = '<a href="' . esc_url( $next_url ) . '" class="p-pagination__next"><img src="' . esc_url( $raquo_img ) . '" alt="次のページへ"></a>';
+	// 次のページ.
+	if ( $paged < $total_pages ) {
+		$numbers_html .= '<a href="' . esc_url( get_pagenum_link( $paged + 1 ) ) . '" class="p-pagination__next is-active">';
+		$numbers_html .= '<img src="' . esc_url( $raquo_img ) . '" alt="' . esc_attr__( '次のページへ', 'hamburger' ) . '">';
+		$numbers_html .= '</a>';
 	} else {
-		$next_link = '<span class="p-pagination__next"><img src="' . esc_url( $raquo_img ) . '" alt="次のページへ"></span>';
+		$numbers_html .= '<span class="p-pagination__next is-disabled">';
+		$numbers_html .= '<img src="' . esc_url( $raquo_img ) . '" alt="' . esc_attr__( '次のページへ', 'hamburger' ) . '">';
+		$numbers_html .= '</span>';
 	}
-	$numbers_html .= $next_link;
+
 	$numbers_html .= '</div>';
 
-	// Mobile用のHTML（前へ/次へ）.
+	/*
+	========================================
+		Mobile : 前へ / 次へ
+	========================================
+	*/
+
 	$arrows_html = '<div class="p-pagination__arrows">';
 
-	// 前へボタン.
-	if ( $current_page > 1 ) {
-		$prev_url     = get_pagenum_link( $current_page - 1 );
-		$arrows_html .= '<a href="' . esc_url( $prev_url ) . '" class="p-pagination__prev" aria-label="前のページへ"><img class="p-pagination__prev-laquo" src="' . esc_url( $laquo_img ) . '" alt="前のページへ">前へ</a>';
+	if ( $paged > 1 ) {
+		$arrows_html .= '<a href="' . esc_url( get_pagenum_link( $paged - 1 ) ) . '" class="p-pagination__prev is-active">';
+		$arrows_html .= '<img class="p-pagination__prev-laquo" src="' . esc_url( $laquo_img ) . '" alt="' . esc_attr__( '前のページへ', 'hamburger' ) . '">';
+		$arrows_html .= esc_html__( '前へ', 'hamburger' );
+		$arrows_html .= '</a>';
 	} else {
-		$arrows_html .= '<span class="p-pagination__prev"><img class="p-pagination__prev-laquo" src="' . esc_url( $laquo_img ) . '" alt="前のページへ">前へ</span>';
+		$arrows_html .= '<span class="p-pagination__prev is-disabled">';
+		$arrows_html .= '<img class="p-pagination__prev-laquo" src="' . esc_url( $laquo_img ) . '" alt="' . esc_attr__( '前のページへ', 'hamburger' ) . '">';
+		$arrows_html .= esc_html__( '前へ', 'hamburger' );
+		$arrows_html .= '</span>';
 	}
 
-	// 次へボタン.
-	if ( $current_page < $total_pages ) {
-		$next_url     = get_pagenum_link( $current_page + 1 );
-		$arrows_html .= '<a href="' . esc_url( $next_url ) . '" class="p-pagination__next" aria-label="次のページへ">次へ<img class="p-pagination__next-raquo" src="' . esc_url( $raquo_img ) . '" alt="次のページへ"></a>';
+	if ( $paged < $total_pages ) {
+		$arrows_html .= '<a href="' . esc_url( get_pagenum_link( $paged + 1 ) ) . '" class="p-pagination__next is-active">';
+		$arrows_html .= esc_html__( '次へ', 'hamburger' );
+		$arrows_html .= '<img class="p-pagination__next-raquo" src="' . esc_url( $raquo_img ) . '" alt="' . esc_attr__( '次のページへ', 'hamburger' ) . '">';
+		$arrows_html .= '</a>';
 	} else {
-		$arrows_html .= '<span class="p-pagination__next">次へ<img class="p-pagination__next-raquo" src="' . esc_url( $raquo_img ) . '" alt="次のページへ"></span>';
+		$arrows_html .= '<span class="p-pagination__next is-disabled">';
+		$arrows_html .= esc_html__( '次へ', 'hamburger' );
+		$arrows_html .= '<img class="p-pagination__next-raquo" src="' . esc_url( $raquo_img ) . '" alt="' . esc_attr__( '次のページへ', 'hamburger' ) . '">';
+		$arrows_html .= '</span>';
 	}
 
 	$arrows_html .= '</div>';
 
-	// 最終的なHTML.
-	$html = '<nav class="p-pagination c-color--text-secondary">' . $numbers_html . $arrows_html . '</nav>';
-
-	return $html;
+	// 画面幅で出し分け（CSS制御）.
+	return '<nav class="p-pagination c-color--text-secondary">' . $numbers_html . $arrows_html . '</nav>';
 }
-add_filter( 'wp_pagenavi', 'hamburger_custom_pagenavi_output' );
+
+/**
+ * Output custom pagination.
+ *
+ * Use this function in archive.php or search.php.
+ *
+ * @param WP_Query|null $query Query object. Defaults to global query.
+ */
+function hamburger_pagination( $query = null ) {
+	echo wp_kses_post( hamburger_customize_pagination( '', $query ) );
+}
